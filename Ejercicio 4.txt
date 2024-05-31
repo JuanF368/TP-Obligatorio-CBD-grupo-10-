@@ -1,0 +1,69 @@
+Ejercicio 4:
+
+a)
+SELECT numeroEntrada, nroAsiento, idSala, idFuncion
+FROM entrada
+WHERE datediff(
+	(SELECT idFuncion
+	FROM funcion
+	WHERE (idFuncion) IN(
+		SELECT idFuncion
+		FROM entrada
+		)),
+	fechaEmision
+	)=2
+
+
+b)
+SELECT nroAsiento
+FROM asiento
+WHERE idSala=(
+	SELECT idSala
+	FROM sala
+	WHERE tipo='3D')
+	AND nroAsiento NOT IN(
+		SELECT nroAsiento
+		FROM entrada
+	);
+
+c)
+SELECT id, duracion,COUNT(
+	(SELECT idFuncion
+	FROM funcion
+	WHERE(idPublicidadInicio=(
+			SELECT id
+			FROM publicidad
+			))
+		
+		)AND YEAR(
+        	(SELECT fecha
+            	FROM funcion)
+        	)=2022
+	)
+FROM publicidad
+WHERE (id) IN(
+	SELECT idPublicidadInicio
+	FROM funcion
+)GROUP BY id;
+
+
+d)
+SELECT fechaEmision, COUNT(
+	(SELECT numeroEntrada
+	FROM entrada
+	WHERE(idFuncion IN(
+		SELECT idFuncion
+		FROM funcion
+		WHERE MONTH(fecha)='05'
+		AND YEAR(fecha)='2022' 
+		AND idPublicidadFinal IN(
+				SELECT id
+				FROM publicidad
+				WHERE (duracion)='00:05:00'
+				)
+			)
+		))
+	
+	)
+FROM entrada
+GROUP BY fechaEmision

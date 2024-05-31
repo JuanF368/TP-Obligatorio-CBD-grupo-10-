@@ -1,0 +1,115 @@
+Ejercicio 2
+
+
+CREATE DATABASE cine;
+
+
+CREATE TABLE persona(
+	tipoDoc varchar(50) NOT NULL,
+	nroDocumento int(8) NOT NULL,
+	apellido varchar(50) NOT NULL,
+	nombre varchar(50) NOT NULL,
+	fechaNacimiento date NOT NULL,
+	telefono int(15) NOT NULL,
+	correoElectronico varchar(50) NOT NULL,
+	PRIMARY KEY (tipoDoc, nroDocumento)
+);
+
+
+CREATE TABLE cliente(
+	tipoDoc varchar(50) NOT NULL,
+	nroDocumento int(8) NOT NULL,
+	situacionFiscal varchar(50) NOT NULL,
+	PRIMARY KEY (tipoDoc, nroDocumento),
+	FOREIGN KEY (tipoDoc, nroDocumento) REFERENCES persona
+	(tipoDoc, nroDocumento) ON UPDATE CASCADE ON DELETE RESTRICT
+
+);
+
+
+CREATE TABLE encargado(
+	tipoDoc varchar(50) NOT NULL,
+	nroDocumento int(8) NOT NULL,
+	legajo int(10) NOT NULL,
+	categoria varchar(50) NOT NULL,
+	PRIMARY KEY (tipoDoc, nroDocumento),
+	FOREIGN KEY (tipoDoc, nroDocumento) REFERENCES persona
+	(tipoDoc, nroDocumento) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE entrada(
+	numeroEntrada int(5) NOT NULL,
+	tipoDocCliente varchar(50) NOT NULL,
+	nroDocumentoCliente int(8) NOT NULL,
+	nroAsiento int(5) NOT NULL,
+	idSala int(5) NOT NULL,
+	idFuncion int(5) NOT NULL,
+	fechaEmision date NOT NULL,
+	PRIMARY KEY (numeroEntrada),
+	FOREIGN KEY (tipoDocCliente, nroDocumentoCliente) REFERENCES cliente
+	(tipoDoc, nroDocumento) ON UPDATE CASCADE ON DELETE RESTRICT,
+	FOREIGN KEY (idSala, nroAsiento) REFERENCES asiento
+	(idSala, nroAsiento) ON UPDATE CASCADE ON DELETE RESTRICT,
+	FOREIGN KEY (idFuncion) REFERENCES funcion
+	(idFuncion) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE funcion(
+	idFuncion int(5) NOT NULL,
+	fecha date NOT NULL,
+	hora time NOT NULL,
+	idSala int(5) NOT NULL,
+	idPublicidadInicio int(5) NOT NULL,
+	idPublicidadFinal int(5) NOT NULL,
+	PRIMARY KEY (idFuncion),
+	FOREIGN KEY (idSala) REFERENCES sala(idSala)
+	ON UPDATE CASCADE
+	ON DELETE RESTRICT,
+	FOREIGN KEY (idPublicidadInicio, idPublicidadFinal) REFERENCES publicidad
+	(id, id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE publicidad(
+	id int(5) NOT NULL,
+	duracion time NOT NULL,
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE sala(
+	idSala int(5) NOT NULL,
+	nombre varchar(50) NOT NULL,
+	cantidadAsientos int(5) NOT NULL,
+	tipo varchar(50) NOT NULL,
+	tipoDocEncargado varchar(50) NOT NULL,
+	nroDocumentoEncargado int(8) NOT NULL,
+	PRIMARY KEY (idSala),
+	FOREIGN KEY (tipoDocEncargado, nroDocumentoEncargado) REFERENCES encargado
+	(tipoDoc, nroDocumento) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE asiento(
+	idSala int(5) NOT NULL,
+	nroAsiento int(5) NOT NULL,
+	fila int(5) NOT NULL,
+	PRIMARY KEY (idSala, nroAsiento),
+	FOREIGN KEY (idSala) REFERENCES sala
+	(idSala) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE prefiere(
+	tipoDocCliente varchar(50) NOT NULL,
+	nroDocumentoCliente int(8) NOT NULL,
+	idPublicidad int(5) NOT NULL,
+	motivo varchar(50) NOT NULL,
+	PRIMARY KEY (tipoDocCliente, nroDocumentoCliente, idPublicidad),
+	FOREIGN KEY (tipoDocCliente, nroDocumentoCliente) REFERENCES cliente
+	(tipoDoc, nroDocumento) ON UPDATE CASCADE ON DELETE RESTRICT,
+	FOREIGN KEY (idPublicidad) REFERENCES publicidad
+	(id) ON UPDATE CASCADE ON DELETE RESTRICT
+);

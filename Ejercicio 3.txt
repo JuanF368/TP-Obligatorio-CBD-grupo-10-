@@ -1,0 +1,19 @@
+Ejercicio 3:
+
+a)
+INSERT INTO encargado (tipoDoc, nroDocumento, legajo, categoria) VALUES
+('DNI', 35149652, 4286, 'guardia');
+
+
+b)
+UPDATE funcion
+	SET hora='20:00:00'
+WHERE fecha='2022-06-24'
+
+
+c)
+DELETE FROM encargados
+WHERE (tipoDoc, nroDocumento) NOT IN (
+	SELECT tipoDocEncargado, nroDocEncargado
+	FROM sala
+);
